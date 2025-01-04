@@ -16,7 +16,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
      
       const response = await axios.get(
 
-        `http://localhost:5000/api/admin/orders/get`
+        `${import.meta.env.VITE_API_URL}/api/admin/orders/get`
        
       );
       
@@ -24,7 +24,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
       return response.data;
      
     }
-    
+      
   );
  
   export const getOrdersDetailsForAdmin = createAsyncThunk(
@@ -33,7 +33,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
       
       console.log(id,"id")
       const response = await axios.get(
-        `http://localhost:5000/api/admin/orders/details/${id}`
+        `${import.meta.env.VITE_API_URL}/api/admin/orders/details/${id}`
        
       );
 
@@ -50,7 +50,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
     async ({id,orderStatus}) => {
       
       const response = await axios.put(
-        `http://localhost:5000/api/admin/orders/update/${id}`,
+        `${import.meta.env.VITE_API_URL}/api/admin/orders/update/${id}`,
         {
           orderStatus
         }

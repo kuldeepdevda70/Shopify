@@ -19,7 +19,7 @@ import axios from "axios";
       });
   
       const result = await axios.get(
-        `http://localhost:5000/api/shop/products/get?${query}`
+        `${import.meta.env.VITE_API_URL}/api/shop/products/get?${query}`
       );
   
       console.log(result);
@@ -34,7 +34,7 @@ import axios from "axios";
     
     async (id) => {
       const result = await axios.get(
-        `http://localhost:5000/api/shop/products/get/${id}`
+        `${import.meta.env.VITE_API_URL}/api/shop/products/get/${id}`
       );
   
       return result?.data;

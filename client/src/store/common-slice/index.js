@@ -12,7 +12,7 @@ export const getFeatureImages = createAsyncThunk(
   async () => {
     
     const response = await axios.get(
-      `http://localhost:5000/api/common/feature/get`
+      `${import.meta.env.VITE_API_URL}/api/common/feature/get`
     );
     console.log("Full API Response:", response.data)
 
@@ -26,7 +26,7 @@ export const addFeatureImage = createAsyncThunk(
     async (image) => {
       
       const response = await axios.post(
-        `http://localhost:5000/api/common/feature/add`,
+        `${import.meta.env.VITE_API_URL}/api/common/feature/add`,
         {image}
       );
       console.log("Full API Response:", response.data)

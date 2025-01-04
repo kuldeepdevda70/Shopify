@@ -11,7 +11,7 @@ import {createSlice, createAsyncThunk } from '@reduxjs/toolkit'
  export const addToCard=createAsyncThunk('card/addCard', async({userId, productId,quantity})=>{
     console.log("Received parameters:", { userId, productId, quantity });
      const respose=await axios.post(
-         "http://localhost:5000/api/shop/card/add",
+         `${import.meta.env.VITE_API_URL}/api/shop/card/add`,
          {
             userId,
             productId,
@@ -26,7 +26,7 @@ import {createSlice, createAsyncThunk } from '@reduxjs/toolkit'
  export const fetchCardItems=createAsyncThunk('card/fetchCardItems', async(userId)=>{
     
     const respose=await axios.get(
-        `http://localhost:5000/api/shop/card/get/${userId}`,
+        `${import.meta.env.VITE_API_URL}/api/shop/card/get/${userId}`,
         
     )
        console.log(respose,'respose')
@@ -37,7 +37,7 @@ export const deleteCardItems=createAsyncThunk('card/deleteCardItems', async({use
     console.log(userId,productId)
     
     const respose=await axios.delete(
-        `http://localhost:5000/api/shop/card/${userId}/${productId}`,
+        `${import.meta.env.VITE_API_URL}/api/shop/card/${userId}/${productId}`,
        
     )
 
@@ -47,7 +47,7 @@ export const deleteCardItems=createAsyncThunk('card/deleteCardItems', async({use
 export const upadeCardQuantity=createAsyncThunk('card/upadeCardQuantity', async({userId, productId,quantity})=>{
        console.log(userId, productId,"quantity",quantity)
     const respose=await axios.put(
-        "http://localhost:5000/api/shop/card/update-cart",
+       ` ${import.meta.env.VITE_API_URL}/api/shop/card/update-cart`,
         {
            userId,
            productId,
