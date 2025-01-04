@@ -1,6 +1,6 @@
 const express = require("express");
 
-const { addAddress,fetchAllAddress,deleteAddress,editAddress} = require('../../controllers/shop/Address-controllers')
+const { addAddress,fetchAllAddress,deleteAddress,editAddress} = require('../../controllers/shop/address-controllers')
 
 const router = express.Router();
 
