@@ -64,17 +64,30 @@ const loginUser= async (req,res)=>{
           userName:checkUser.userName
       }, 'CLIENT_SECRET_KEY',{expiresIn:'60m'} )
            
-         res.cookie('token', token, {httponly:true, secure:false}).json({
+         // res.cookie('token', token, {httponly:true, secure:true}).json({
+         //  success:true,
+         //  message:'Logged in successfully',
+         //  user: {
+         //    email : checkUser.email,
+         //    role: checkUser.role,
+         //    id: checkUser._id,
+         //    userName:checkUser.userName
+
+         //  }
+         // })
+
+       res.status(200).json({
           success:true,
-          message:'Logged in successfully',
-          user: {
+           message:'Logged in successfully',
+         token,
+            user: {
             email : checkUser.email,
             role: checkUser.role,
             id: checkUser._id,
             userName:checkUser.userName
 
-          }
-         })
+           }
+       })
 
         
      } catch (e) {
