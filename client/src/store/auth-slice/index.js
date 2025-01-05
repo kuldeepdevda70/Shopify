@@ -113,9 +113,12 @@ const authSlice=createSlice({
     name:"auth",
     initialState,
     reducers:{
-        setUser:(state,action) =>{
-
-        },
+        setUser:(state,action) =>{},
+         resetTokenAndCredeatials : (state)=>{
+               state.isAuthenticated=false;
+               state.user=null
+              state.token=null
+         }
     },
 
     extraReducers: (builder) => {
@@ -182,5 +185,5 @@ const authSlice=createSlice({
      }
 })
 
-export const {setUser}=authSlice.actions;
+export const {setUser,resetTokenAndCredeatials}=authSlice.actions;
 export default authSlice.reducer
