@@ -4,16 +4,20 @@ import { LogOut } from "lucide-react"
 import { handler } from "tailwindcss-animate"
 import { useDispatch } from "react-redux"
 import { logoutUser } from "@/store/auth-slice"
+import {  useNavigate } from "react-router-dom"
 
 
 
 function AdminHeader({setOpen}){
 
      const dispatch=useDispatch() 
-
+       const navigate = useNavigate();
     function handlerLogOut(){
     
-        dispatch(logoutUser())
+        //dispatch(logoutUser())
+         dispatch(resetTokenAndCredeatials())
+                 sessionStorage.clear();
+                navigate("/auth/login")
 
     }
 
