@@ -7,7 +7,7 @@ import { shoppingViewHeaderMenuItems } from "@/config";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
 import { handler } from "tailwindcss-animate";
-import { logoutUser } from "@/store/auth-slice";
+import { logoutUser,resetTokenAndCredeatials } from "@/store/auth-slice";
 import UserCardWrapper from "./card-wrapper";
 import { useEffect, useState } from "react";
 import { fetchCardItems } from "@/store/shop/card-slice";
