@@ -60,7 +60,10 @@ import { Label } from "@radix-ui/react-label";
            
 
             function handlerLogout (){
-               dispatch(logoutUser())
+              // dispatch(logoutUser())
+                dispatch(resetTokenAndCredeatials())
+                 sessionStorage.clear();
+                navigate("/auth/login")
             }
 
             useEffect(()=>{
