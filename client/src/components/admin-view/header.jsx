@@ -3,7 +3,7 @@ import { Button } from "../ui/button"
 import { LogOut } from "lucide-react"
 import { handler } from "tailwindcss-animate"
 import { useDispatch } from "react-redux"
-import { logoutUser } from "@/store/auth-slice"
+import { logoutUser, resetTokenAndCredeatials} from "@/store/auth-slice"
 import {  useNavigate } from "react-router-dom"
 
 
