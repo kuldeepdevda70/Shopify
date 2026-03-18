@@ -1,0 +1,145 @@
+name: React + Node Fullstack CI/CD
+
+# Trigger on push to dev or main, or manual trigger
+on:
+  push:
+    branches:
+      - dev
+      - main
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Select environment'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - prod
+
+jobs:
+  # ------------------ FRONTEND ------------------
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Frontend Dependencies
+        run: |
+          cd client
+          npm install
+
+      - name: Lint & Build Frontend
+        run: |
+          cd client
+          npm run lint
+          npm run build
+
+      - name: Upload Frontend Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: client/dist # Vite build folder
+
+  # ------------------ BACKEND ------------------
+  backend:
+    runs-on: ubuntu-latest
+    needs: frontend
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Backend Dependencies
+        run: |
+          cd server
+          npm install
+
+      - name: Run Backend Tests
+        run: |
+          cd server
+          npm run dev & sleep 5 # if you have tests, run them instead
+          echo "Backend server running (or add tests here)"
+
+  # ------------------ DEPLOY ------------------
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [frontend, backend]
+    steps:
+      - name: Download Frontend Build
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build
+          path: client/dist
+
+      - name: Determine Environment
+        id: env
+        run: |
+          # Detect branch or manual input
+          ENV_INPUT="${{ github.event.inputs.environment }}"
+          if [ -n "$ENV_INPUT" ]; then
+            ENV="$ENV_INPUT"
+          elif [[ "${GITHUB_REF}" == "refs/heads/dev" ]]; then
+            ENV="dev"
+          elif [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
+            ENV="prod"
+          fi
+          echo "ENV=$ENV" >> $GITHUB_ENV
+
+          # Set HOST and KEY dynamically
+          if [ "$ENV" == "dev" ]; then
+            echo "HOST=${{ secrets.DEV_HOST }}" >> $GITHUB_ENV
+            SECRET_KEY="DEV_KEY"
+          elif [ "$ENV" == "prod" ]; then
+            echo "HOST=${{ secrets.PROD_HOST }}" >> $GITHUB_ENV
+            SECRET_KEY="PROD_KEY"
+          fi
+          echo "SECRET_KEY=$SECRET_KEY" >> $GITHUB_ENV
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets[env.SECRET_KEY] }}
+
+      - name: Deploy Frontend & Backend
+        run: |
+          echo "Deploying to $ENV server at $HOST"
+
+          # Upload Frontend
+          scp -o StrictHostKeyChecking=no -r client/dist/* ubuntu@$HOST:/home/ubuntu/frontend/
+
+          # Upload Backend
+          scp -o StrictHostKeyChecking=no -r server/* ubuntu@$HOST:/home/ubuntu/backend/
+
+          # SSH to server and restart backend + serve frontend
+          ssh -o StrictHostKeyChecking=no ubuntu@$HOST << 'EOF'
+            # Install Node & Nginx if needed
+            sudo apt update
+            sudo apt install -y nginx nodejs npm
+
+            # Frontend setup
+            mkdir -p /var/www/html
+            sudo rm -rf /var/www/html/*
+            sudo cp -r /home/ubuntu/frontend/* /var/www/html/
+
+            # Backend setup
+            cd /home/ubuntu/backend
+            npm install
+            # Stop old server (optional, adjust according to your backend start)
+            pkill -f server.js || true
+            # Start backend
+            nohup node server.js > backend.log 2>&1 &
+            
+            # Restart Nginx
+            sudo systemctl restart nginx
+          EOF
